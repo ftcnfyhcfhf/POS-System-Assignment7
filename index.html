@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Point of Sale</title>
+    <link rel="icon" type="image/x-icone" href="../assets/icons/icons8-monitor-64.ico">
+    <link rel="stylesheet" href="assets/styles/Styles.css">
+    <link rel="stylesheet" href="assets/fontsAwesome/css/all.css">
+</head>
+<body>
+<header>
+        <div>
+            <h1> My POS System</h1>
+            <a href="#" class="btns"  id="Customer" onclick="loadHtmlFile('customer', 'cus')">Customer</a>
+            <a href="#" class="btns"  id="Order" onclick="loadHtmlFile('order', 'ors')">Order </a>
+            <a href="#" class="btns"  id="Item" onclick="loadHtmlFile('item', 'itm')" >Item </a>
+
+        </div>
+</header>
+<a href="#" class="btns1"  id="Customer1" onclick="loadHtmlFile('customer', 'cus')">Customer</a>
+<a href="#" class="btns1"  id="Order1" onclick="loadHtmlFile('order', 'ors')">Order </a>
+<a href="#" class="btns1"  id="Item1" onclick="loadHtmlFile('item', 'itm')" >Item </a>
+<main>
+
+    <div id="template" class="template">
+    </div>
+</main>
+<script src="assets/lib/jquery-3.6.4.min.js"></script>
+<script>
+
+   var oldBtn ;
+
+    loadHtmlFile('customer', 'cus');
+
+    function loadHtmlFile(file, id) {
+        setStyle(id);
+        $('#template').load(file + '.html');
+        oldBtn = id;
+    }
+
+    function setStyle(id) {
+
+        if (oldBtn != undefined){
+            $('#' + oldBtn).css({
+                background: "#dfe4ea",
+                color: "#485460",
+                boxShadow : "none"
+            });
+        }
+
+        $('#' + id).css({
+            background: "#0652DD",
+            color: "white",
+            boxShadow : "2px 2px 8px gray"
+        });
+    }
+
+</script>
+</body>
+</html>
