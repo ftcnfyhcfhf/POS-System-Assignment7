@@ -27,9 +27,9 @@
             <input type="tel" class="form-control" id="qty" placeholder="123">
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-outline-danger">Save</button>
-            <button type="submit" class="btn btn-outline-secondary">Update</button>
-            <button type="submit" class="btn btn-outline-success">Delete</button>
+            <button type="submit" class="btn btn-outline-danger" id="btnSave">Save</button>
+            <button type="submit" class="btn btn-outline-secondary" id="btnUpdate">Update</button>
+            <button type="submit" class="btn btn-outline-success" id="btnDelete">Delete</button>
         </div>
     </form>
     <br>
@@ -47,16 +47,157 @@
             <th>Qty On Hand</th>
             </thead>
             <tbody>
-            <tr>
-                <td>IT-0001</td>
-                <td>Red Rice</td>
-                <td>2000</td>
-                <td>100KG</td>
-            </tr>
-
             </tbody>
         </table>
     </form>
 </main>
 </body>
+<script src="assets/lib/jquery-3.6.4.min.js"></script>
+<script>
+    var item = "ITEM";
+    var arrIndex = -1;
+    $('#btnSave').click(() => {
+        var obj;
+        if (checkText()) {
+            let arr = getLocalSData();
+
+            if (isExistsById(arr)) {
+                alert("Item code all ready exists !");
+                return;
+            }
+
+            arr.push(initObj());
+            /*alert(arr.length);*/
+            localStorage.setItem(item, JSON.stringify(arr));
+            /*alert(item.length);*/
+            loadData();
+            disableBtn();
+            addTableClickEvent();
+            clearData();
+        }
+
+    });
+
+    function checkText() {
+        if ($('#itemCode').val() === "") {
+            alert("Item code is empty or invalid !");
+            $('#itemCode').focus();
+            $('#itemCode').css({
+                borderBottom: "2px solid red"
+            });
+            return false;
+        } else if ($('#des').val() === "") {
+            alert("Description is invalid or empty !");
+            $('#des').focus();
+            $('#des').css({borderBottom: "2px solid red"});
+            return false;
+        } else if ($('#unitPrice').val() === "") {
+            alert("Unit price is invalid or empty  !");
+            $('#unitPrice').focus();
+            $('#unitPrice').css({borderBottom: "2px solid red"});
+            return false;
+        } else if ($('#qty').val() === "") {
+            alert("Qty is invalid or empty  !");
+            $('#qty').focus();
+            $('#qty').css({borderBottom: "2px solid red"});
+            return false;
+        }
+        return true;
+    }
+    function getLocalSData() {
+
+        let pre_data = localStorage.getItem(item);
+        let data_array = [];
+        if (pre_data) {
+            data_array = JSON.parse(pre_data);
+        }
+        return data_array;
+    }
+    function isExistsById(arr) {
+        let flag = false;
+        arr.filter((event) => {
+            if (event.item_code === $('#itemCode').val()) {
+                flag = true;
+            }
+        });
+        return flag;
+    }
+    function loadData() {
+
+        let per_data = localStorage.getItem(item);
+
+        $('table tbody tr td').remove();
+
+        let item_data_arr = JSON.parse(per_data);
+        if(per_data){
+            item_data_arr.map((value, index) => {
+                var row = "<tr>" +
+                    "<td>" + value.item_code+ "</td>" +
+                    "<td>" + value.item_description + "</td>" +
+                    "<td>" + value.item_unit_price + "</td>" +
+                    "<td>" + value.item_qty + "</td>" +
+                    "</tr>";
+
+                $('tbody').append(row);
+            });
+        }
+    }
+    function disableBtn() {
+        document.getElementById('saveBtn').disabled = true;
+        document.getElementById('updateBtn').disabled = true;
+        document.getElementById('deleteBtn').disabled = true;
+    }
+    function initObj() {
+        return {
+            item_code: $('#itemCode').val(),
+            item_description: $('#des').val(),
+            item_unit_price: $('#unitPrice').val(),
+            item_qty: $('#qty').val()
+        }
+    }
+
+    $('#btnUpdate').on('click', () => {
+
+        if (checkText()) {
+            let cus_arr = getLocalSData();
+
+           /* let index = cus_arr.findIndex(value => value.item_code === $('#itemCode').val());*/
+
+            cus_arr[arrIndex] = initObj();
+
+            localStorage.setItem(item, JSON.stringify(cus_arr));
+            loadData();
+            disableBtn();
+            clearData();
+            arrIndex = -1;
+        }
+        addTableClickEvent();
+    });
+    $('#btnDelete').on('click', () => {
+
+        if (checkText()) {
+            let cus_arr = getLocalSData();
+
+            cus_arr.splice(arrIndex, 1);
+            localStorage.setItem(item, JSON.stringify(cus_arr));
+            loadData();
+            disableBtn();
+            clearData();
+            arrIndex = -1;
+        }
+        addTableClickEvent();
+    });
+    function addTableClickEvent() {
+        $('table  tbody  tr').on('click', (event) => {
+            $('#itemCode').val(event.currentTarget.cells[0].innerText)
+            $('#des').val(event.currentTarget.cells[1].innerText)
+            $('#unitPrice').val(event.currentTarget.cells[2].innerText)
+            $('#qty').val(event.currentTarget.cells[3].innerText)
+            arrIndex = event.currentTarget.sectionRowIndex;
+            console.log(arrIndex)
+        });
+    }
+    loadData();
+    addTableClickEvent();
+</script>
 </html>

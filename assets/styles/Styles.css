@@ -11,7 +11,6 @@ main {
 
 .template {
     display: block;
-
 }
 
 header > div {
@@ -292,4 +291,10 @@ main > h1 {
 }
 #btnDelete{
     left: 100VW;
+}
+#myform{
+    background-color: lightpink;
+}
+.myMane{
+    background-color: lightskyblue;
 }

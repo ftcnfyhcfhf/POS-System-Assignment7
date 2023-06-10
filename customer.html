@@ -27,8 +27,8 @@
             <input type="tel" class="form-control" id="tel" placeholder="+94 xxx xxxx">
         </div>
         <div class="col-12">
-            <button type="submit" class="btn btn-outline-danger" >Save</button>
-            <button type="submit" class="btn btn-outline-secondary">Update</button>
+            <button type="submit" class="btn btn-outline-danger" id="btnSave">Save</button>
+            <button type="submit" class="btn btn-outline-secondary" id="btnUpdate">update</button>
             <button type="submit" class="btn btn-outline-success" id="btnDelete">Delete</button>
         </div>
     </form>
@@ -41,7 +41,7 @@
     <br>
 
     <form class="row g-3 p-2">
-        <table class="table">
+        <table class="table" id="customerTable">
             <thead>
             <th>Customer ID</th>
             <th>Customer Name</th>
@@ -49,16 +49,203 @@
             <th>Customer Contact</th>
             </thead>
             <tbody>
-            <tr>
-                <td>C-0001</td>
-                <td>Sirimal</td>
-                <td>Horana</td>
-                <td>0754663600</td>
-            </tr>
-
             </tbody>
         </table>
     </form>
 </main>
 </body>
+<script src="assets/lib/jquery-3.6.4.min.js"></script>
+<script src="controller/CustomerContrfoller.js"></script>
+<script>
+    let arr=new Array();
+    const data = "DATA";
+    var arrIndex = -1;
+
+    function loadData() {
+
+        let pre_data = localStorage.getItem(data);
+        let customer_data_arr = JSON.parse(pre_data);
+
+        $('table tbody tr').remove();
+
+        customer_data_arr.map((result, index) => {
+            var row = "<tr>" +
+                "<td>"+ result.customer_id +"</td>" +
+                "<td>"+ result.customer_name +"</td>" +
+                "<td>"+ result.customer_address +"</td>" +
+                "<td>"+ result.customer_tel +"</td>" +
+                "</tr>";
+            $('tbody').append(row);
+        })
+    }
+
+    function clearData() {
+        $('#id').val("");
+        $('#name').val("");
+        $('#address').val("");
+        $('#tel').val("");
+        document.getElementById('id').disabled = false;
+        document.getElementById('saveBtn').disabled = false;
+    }
+
+    function addTableClickEvent() {
+        $('table  tbody  tr').on('click', (event) => {
+            $('#id').val(event.currentTarget.cells[0].innerText)
+            $('#name').val(event.currentTarget.cells[1].innerText)
+            $('#address').val(event.currentTarget.cells[2].innerText)
+            $('#tel').val(event.currentTarget.cells[3].innerText)
+            arrIndex = event.currentTarget.sectionRowIndex;
+            console.log(arrIndex)
+
+        });
+    }
+
+    function initObj() {
+        return {
+            customer_id: $('#id').val(),
+            customer_name: $('#name').val(),
+            customer_address: $('#address').val(),
+            customer_tel: $('#tel').val()
+        }
+    }
+
+    function checkText() {
+        if ($('#id').val() === "") {
+            alert("Customer id is empty or invalid !");
+            $('#id').focus();
+            $('#id').css({
+                borderBottom: "2px solid red"
+            });
+            return false;
+        } else if ($('#name').val() === "") {
+            alert("Name is invalid or empty !");
+            $('#name').focus();
+            $('#name').css({borderBottom: "2px solid red"});
+            return false;
+        } else if ($('#address').val() === "") {
+            alert("Address is invalid or empty  !");
+            $('#address').focus();
+            $('#address').css({borderBottom: "2px solid red"});
+            return false;
+        } else if ($('#tel').val() === "") {
+            alert("Phone number is invalid or empty  !");
+            $('#tel').focus();
+            $('#tel').css({borderBottom: "2px solid red"});
+            return false;
+        }
+        return true;
+    }
+
+    $('#btnSave').click(() => {
+
+        if (checkText()){
+            /*var obj = {
+     customer_id: customer_id,
+     customer_name:customer_name,
+     customer_address: customer_address,
+     customer_tel: customer_tel
+ }
+
+ arr.push(obj);
+ arr.forEach(function(arr){
+    /!* console.log('I want to eat a ' + arr.customer_name);*!/
+     var row = "<tr>" +
+         "<td>"+ arr.customer_id +"</td>" +
+         "<td>"+ arr.customer_name +"</td>" +
+         "<td>"+ arr.customer_address +"</td>" +
+         "<td>"+ arr.customer_tel +"</td>" +
+         "</tr>";
+     $('tbody').append(row);
+ });*/
+
+            let pre_data = localStorage.getItem(data);
+            console.log("ARR: ", pre_data);
+
+            let data_arr = [];
+
+            // undefine/ null/ "" / false
+            if(pre_data) {
+                data_arr = JSON.parse(pre_data);
+            }
+            data_arr.push(initObj());
+            console.log(data_arr);
+            localStorage.setItem(data, JSON.stringify(data_arr));
+
+            loadData();
+            addTableClickEvent();
+        }
+    });
+    loadData();
+
+    //update----------------------
+
+    $('#btnUpdate').on('click', () => {
+
+        if (true) {
+            if (arrIndex < 0) {
+                alert("Please save the new customer before update !");
+                return;
+            }
+            let pre_data = localStorage.getItem(data);
+            let data_array = [];
+            if (pre_data) {
+                data_array = JSON.parse(pre_data);
+            }
+            let cus_arr = data_array;
+
+            cus_arr[arrIndex] = initObj();
+            localStorage.setItem(data, JSON.stringify(cus_arr));
+            loadData();
+            addTableClickEvent();
+            clearData();
+            arrIndex = -1;
+        }
+    });
+
+    $('#btnUpdate').on('click', () => {
+
+        if (true) {
+            if (arrIndex < 0) {
+                alert("Please save the new customer before update !");
+                return;
+            }
+            let pre_data = localStorage.getItem(data);
+            let data_array = [];
+            if (pre_data) {
+                data_array = JSON.parse(pre_data);
+            }
+            let cus_arr = data_array;
+
+            cus_arr[arrIndex] = initObj();
+            localStorage.setItem(data, JSON.stringify(cus_arr));
+            loadData();
+            addTableClickEvent();
+            clearData();
+            arrIndex = -1;
+        }
+    });
+    $('#btnDelete').on('click', () => {
+
+        if (true) {
+            if (arrIndex < 0) {
+                alert("Please save the new customer before update !");
+                return;
+            }
+            let pre_data = localStorage.getItem(data);
+            let data_array = [];
+            if (pre_data) {
+                data_array = JSON.parse(pre_data);
+            }
+            let cus_arr = data_array;
+
+            cus_arr.splice(arrIndex, 1);
+            localStorage.setItem(data, JSON.stringify(cus_arr));
+            loadData();
+            addTableClickEvent();
+            clearData();
+            arrIndex = -1;
+        }
+    });
+    addTableClickEvent();
+</script>
 </html>
